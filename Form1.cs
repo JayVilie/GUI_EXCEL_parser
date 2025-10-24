@@ -518,7 +518,7 @@ namespace GUI_EXCEL_parser
                 { "SAF", "AKKUYU_GATE" },
 
                 { "SAR", "AKKUYU_GATE" },
-
+                { "KLB", "AKKUYU_GATE" },
 
                 { "SAD", "AKKUYU_GATE" },
                 { "SAM", "AKKUYU_GATE" },
@@ -547,7 +547,8 @@ namespace GUI_EXCEL_parser
                 { "SGC", "AKKUYU_FAN" },
                 { "KLE", "AKKUYU_FAN" },
                 { "KLF", "AKKUYU_FAN" },
-                { "KLC", "AKKUYU_FAN" }
+                { "KLC", "AKKUYU_FAN" },
+                { "SAD", "AKKUYU_FAN" }
             }
         },
         // Коды оборудования "AP" для насосов
