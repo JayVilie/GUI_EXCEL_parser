@@ -62,6 +62,7 @@ namespace GUI_EXCEL_parser
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnCreateDuplicatedDatabase = new System.Windows.Forms.Button();
             this.btnParseDpl = new System.Windows.Forms.Button();
+            this.btnExportByBuilding = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -146,11 +147,19 @@ namespace GUI_EXCEL_parser
             this.btnParseDpl.UseVisualStyleBackColor = true;
             this.btnParseDpl.Click += new System.EventHandler(this.btnParseDpl_Click);
             // 
+            // btnExportByBuilding
+            // 
+            resources.ApplyResources(this.btnExportByBuilding, "btnExportByBuilding");
+            this.btnExportByBuilding.Cursor = System.Windows.Forms.Cursors.SizeNESW;
+            this.btnExportByBuilding.Name = "btnExportByBuilding";
+            this.btnExportByBuilding.UseVisualStyleBackColor = true;
+            // 
             // Converter
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.btnExportByBuilding);
             this.Controls.Add(this.btnParseDpl);
             this.Controls.Add(this.btnCreateDuplicatedDatabase);
             this.Controls.Add(this.progressBar1);
@@ -275,6 +284,6 @@ namespace GUI_EXCEL_parser
             btn.TextImageRelation = TextImageRelation.ImageBeforeText;
         }
 
-
+        private Button btnExportByBuilding;
     }
 }
