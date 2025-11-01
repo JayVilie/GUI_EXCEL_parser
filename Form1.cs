@@ -1662,7 +1662,7 @@ COMMIT;";
 
 
 
-        // Экспорт: 1 файл = 1 здание; внутри — несколько DEVICES (по шкафам) + POINTS (по их механизмам)
+        // Экспорт: 1 файл = 1 блок (00/10/20/30/40); внутри — несколько DEVICES (по шкафам) + POINTS (по их механизмам)
         private async void btnExportByBuilding_Click(object sender, EventArgs e)
         {
             string excelFilePath = txtExcelFilePath.Text;
@@ -1679,126 +1679,145 @@ COMMIT;";
                 return;
             }
 
-            var result = MessageBox.Show("Создать CSV-файлы по зданиям?", "Подтверждение", MessageBoxButtons.YesNo);
+            var result = MessageBox.Show("Создать CSV-файлы по блокам (00/10/20/30/40)?", "Подтверждение", MessageBoxButtons.YesNo);
             if (result == DialogResult.No) return;
 
             try
             {
                 btnExportByBuilding.Enabled = false;
-                btnExportByBuilding.Text = "Экспорт...";
+                btnExportByBuilding.Text = "Экспорт по блокам...";
 
-                // Берём «сырьё» напрямую из исходных листов (без странного tuple-ToString)
-                var mechData = ReadMechData(excelFilePath, "Мех-мы");               // KKS шкафа -> List("10SGK33AA007 18 10UBA", ...)
-                var cabinetData = ReadCabinetData(excelFilePath, "Шкафы");          // KKS шкафа -> (IP, Building, Type, VEKSH)
+                // Сырые данные
+                var mechData = ReadMechData(excelFilePath, "Мех-мы");     // KKS шкафа -> List("10SGK33AA007 18 10UBA", ...)
+                var cabinetData = ReadCabinetData(excelFilePath, "Шкафы");   // KKS шкафа -> (IP, Building, Type, VEKSH)
 
-                // Группировка шкафов по зданию (по колонке «Здание» из листа «Шкафы»)
-                var byBuilding = cabinetData
-                    .GroupBy(kv => kv.Value.Building) // string building
-                    .ToDictionary(g => g.Key, g => g.Select(kv => kv.Key).ToList()); // building -> List<KKS шкафа>
+                // Группировка шкафов по БЛОКУ
+                var byBlock = new Dictionary<string, List<string>>(); // "00"/"10"/... -> List<KKS шкафа>
+                foreach (var kv in cabinetData)
+                {
+                    string cabKks = kv.Key;                 // KKS шкафа (например, "10CMM11")
+                    string building = kv.Value.Building;      // например, "10UBA"
+                    string block = GetBlockFromBuildingOrKks(building, cabKks);
+
+                    if (block == null) continue;              // пропускаем неизвестные
+                    if (!byBlock.ContainsKey(block)) byBlock[block] = new List<string>();
+                    byBlock[block].Add(cabKks);
+                }
+
+                // Оставляем только существующие блоки в порядке 00..40
+                string[] order = { "00", "10", "20", "30", "40" };
+                var blocksOrdered = order.Where(b => byBlock.ContainsKey(b)).ToList();
 
                 int filesCreated = 0;
-                int buildingsTotal = byBuilding.Count;
+                int blocksTotal = blocksOrdered.Count;
                 progressBar1.Value = 0;
-                progressBar1.Maximum = buildingsTotal;
+                progressBar1.Maximum = Math.Max(1, blocksTotal);
 
-                foreach (var kv in byBuilding)
+                foreach (var block in blocksOrdered)
                 {
-                    string building = kv.Key;                    // например, "10UBA"
-                    List<string> cabinetKks = kv.Value;         // KKS шкафов в этом здании
+                    List<string> cabinetKks = byBlock[block];
+                    if (cabinetKks == null || cabinetKks.Count == 0)
+                    {
+                        progressBar1.Value++;
+                        continue;
+                    }
 
-                    // Собираем CSV для здания
                     var sb = new StringBuilder();
                     AppendStandardHeader(sb);
 
-                    // DEVICES — по каждому шкафу здания
+                    // DEVICES
                     AppendDevicesHeader(sb);
                     foreach (var cabKks in cabinetKks)
                     {
-                        // есть ли мехи у шкафа? (иначе смысл добавлять девайс — сомнителен)
+                        // Если у шкафа нет механизмов — пропускаем девайс
                         if (!mechData.TryGetValue(cabKks, out var kkss) || kkss == null || kkss.Count == 0)
                             continue;
 
                         var cab = cabinetData[cabKks];
-                        string cabinetName = CleanString(cabKks);
-                        string controllerIp = CleanString(cab.IP);
+                        string building = cab.Building;                  // ВНИМАНИЕ: используем ФАКТИЧЕСКОЕ "Здание" шкафа (а не "блок")
+                        string cabinetNm = CleanString(cabKks);
+                        string ip = CleanString(cab.IP);
                         string type = CleanString(cab.Type);
 
-                        // Description: как в твоём CSV — делаем краткую подпись с отличиями зданий внутри mech-списка
-                        string desc = GetDistinctBuildingsWithExclusion(kkss, building) + cabinetName + type;
+                        //string desc = GetDistinctBuildingsWithExclusion(kkss, building) + cabinetNm + type;
+                        string desc = BuildDeviceDescription(GetDistinctBuildingsWithExclusion(kkss, building),cabinetNm,type);
 
-                        sb.AppendLine($"{building + "_" + cabinetName},{desc},S7-1500,{controllerIp},S7ONLINE,S7Plus$Online,Online,TRUE,PLC_{building + "_" + cabinetName},,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
+
+
+                        sb.AppendLine($"{building + "_" + cabinetNm},{desc},S7-1500,{ip},S7ONLINE,S7Plus$Online,Online,TRUE,PLC_{building + "_" + cabinetNm},,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
                     }
                     sb.AppendLine(@",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 
-                    // POINTS — шапка секции
+                    // POINTS — шапка
                     AppendPointsHeader(sb);
 
-                    // Для каждого шкафа — диагностические точки + точки по механизмам
+                    // Диагностика + точки по механизмам
                     foreach (var cabKks in cabinetKks)
                     {
                         if (!mechData.TryGetValue(cabKks, out var kkss) || kkss == null || kkss.Count == 0)
                             continue;
 
                         var cab = cabinetData[cabKks];
-                        string cabinetName = CleanString(cabKks);
+                        string building = cab.Building;       // ФАКТИЧЕСКОЕ "Здание" шкафа
+                        string cabinetNm = CleanString(cabKks);
                         string type = CleanString(cab.Type);
 
-                        // Диагностика шкафа (как у тебя)
-                        AppendCabinetDiagnostics(sb, building, cabinetName, type);
+                        // Диагностика шкафа
+                        AppendCabinetDiagnostics(sb, building, cabinetNm, type);
 
-                        // Две строки строк-зон (как у тебя)
+                        // Две строки «зон»
                         sb.AppendLine();
-                        sb.AppendLine($"{building + "_" + cabinetName},Zones_string_1,Помещение_ПожарЗАМЕНА,FB_Zones_DB.Zones_string_1,String,IO,FALSE,COV,pollGr_3,,,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
-                        sb.AppendLine($"{building + "_" + cabinetName},Zones_string_2,Помещение_Пожар_ПодтверждениеЗАМЕНА,FB_Zones_DB.Zones_string_2,String,IO,FALSE,COV,pollGr_3,,,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                        sb.AppendLine($"{building + "_" + cabinetNm},Zones_string_1,Помещение_ПожарЗАМЕНА,FB_Zones_DB.Zones_string_1,String,IO,FALSE,COV,pollGr_3,,,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                        sb.AppendLine($"{building + "_" + cabinetNm},Zones_string_2,Помещение_Пожар_ПодтверждениеЗАМЕНА,FB_Zones_DB.Zones_string_2,String,IO,FALSE,COV,pollGr_3,,,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
                         sb.AppendLine();
 
-                        // По механизмам шкафа
+                        // Механизмы
                         foreach (string raw in kkss)
                         {
-                            // raw = "10SGK33AA007 18 10UBA"
+                            // raw: "10SGK33AA007 18 10UBA"
                             var parts = raw.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             string mechKks = parts.ElementAtOrDefault(0) ?? "";
-                            string kksnumber = parts.ElementAtOrDefault(1) ?? "0";
-                            string mechBuilding = parts.ElementAtOrDefault(2) ?? building;
+                            string kksNumber = parts.ElementAtOrDefault(1) ?? "0";
+                            string mechBld = parts.ElementAtOrDefault(2) ?? building;
 
                             string model = GetObjectModel(mechKks);
                             if (model == "AKKUYU_NO_MODEL") continue;
 
-                            // KKS-строка точки (имя отображаемое) — как у тебя, но аккуратно с разницей здания
-                            string dispName = GetBuildingDifference(mechBuilding, building) + mechKks;
+                            string dispName = GetBuildingDifference(mechBld, building) + mechKks;
 
                             // KKS
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},{dispName},DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.KKS,String,IO,FALSE,COV,pollGr_3,{model},KKS,,,,,,,,,,,,,,,,,FALSE,FALSE,SmoothingConfig_01,,,,,,,,DriverFail,\\{building}\\Mechanisms\\{building + "_" + cabinetName}\\,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},{dispName},DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].PRM.KKS,String,IO,FALSE,COV,pollGr_3,{model},KKS,,,,,,,,,,,,,,,,,FALSE,FALSE,SmoothingConfig_01,,,,,,,,DriverFail,\\{building}\\Mechanisms\\{building + "_" + cabinetNm}\\,");
 
-                            // Базовый набор тегов — как у тебя
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].OPRT.OPRT_INDEX,Uint,IO,FALSE,COV,pollGr_3,{model},OPRT_INDEX,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.Mode,Uint,IO,FALSE,COV,pollGr_3,{model},Mode,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.State,Uint,IO,FALSE,COV,pollGr_3,{model},State,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                            // Базовый набор
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].OPRT.OPRT_INDEX,Uint,IO,FALSE,COV,pollGr_3,{model},OPRT_INDEX,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].PRM.Mode,Uint,IO,FALSE,COV,pollGr_3,{model},Mode,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].PRM.State,Uint,IO,FALSE,COV,pollGr_3,{model},State,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
 
                             // Доп. поле для клапанов
                             if (model.Contains("AKKUYU_VALVE"))
-                                sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.Extinguishing_State,Uint,IO,FALSE,COV,pollGr_3,{model},Extinguishing_State,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                                sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].PRM.Extinguishing_State,Uint,IO,FALSE,COV,pollGr_3,{model},Extinguishing_State,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
 
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].ALM.Alarm_word_1,Uint,IO,FALSE,COV,pollGr_3,{model},Alarm_word_1,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].OPRT.OPRT,Uint,IO,FALSE,COV,pollGr_3,{model},OPRT,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].ALM.Alarm.Alarm[0],bool,IO,FALSE,COV,pollGr_3,{model},Alarm_bit0,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.RASU_bits.RASU_bits[0],bool,IO,FALSE,COV,pollGr_3,{model},RASU_bits0,,,,,,,,,,,,,,,,,FALSE,FALSE,SmoothingConfig_01,,,,,,,,DriverFail,,");
-                            sb.AppendLine($"{building + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.RASU_bits.RASU_bits[1],bool,IO,FALSE,COV,pollGr_3,{model},RASU_bits1,,,,,,,,,,,,,,,,,FALSE,FALSE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].ALM.Alarm_word_1,Uint,IO,FALSE,COV,pollGr_3,{model},Alarm_word_1,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].OPRT.OPRT,Uint,IO,FALSE,COV,pollGr_3,{model},OPRT,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].ALM.Alarm.Alarm[0],bool,IO,FALSE,COV,pollGr_3,{model},Alarm_bit0,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].PRM.RASU_bits.RASU_bits[0],bool,IO,FALSE,COV,pollGr_3,{model},RASU_bits0,,,,,,,,,,,,,,,,,FALSE,FALSE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                            sb.AppendLine($"{building + "_" + cabinetNm},{kksNumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksNumber}].PRM.RASU_bits.RASU_bits[1],bool,IO,FALSE,COV,pollGr_3,{model},RASU_bits1,,,,,,,,,,,,,,,,,FALSE,FALSE,SmoothingConfig_01,,,,,,,,DriverFail,,");
                             sb.AppendLine(" ");
                         }
                     }
 
-                    // Хвост файла
+                    // Хвост
                     sb.AppendLine(@",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
                     sb.AppendLine(@",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
                     sb.AppendLine(@"[VALUE_ASSIGNMENT],,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
                     sb.AppendLine(@"#[ObjectPath],[Property Name],[Property Value],,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 
-                    // Имя файла: <Здание>_devices.csv
-                    string fileName = $"{building}_devices.csv";
+                    // Имя файла: <Блок>_<метка>_devices.csv, например "10_первый_блок_devices.csv"
+                    string label = GetBlockLabel(block);
+                    string safeLabel = label.Replace(' ', '_');
+                    string fileName = $"{block}_{safeLabel}_devices.csv";
                     string path = Path.Combine(outputDirectory, fileName);
 
-                    // UTF-8 with BOM — как у тебя
                     using (var writer = new StreamWriter(path, false, new UTF8Encoding(true)))
                         await writer.WriteAsync(sb.ToString());
 
@@ -1807,34 +1826,70 @@ COMMIT;";
                 }
 
                 btnExportByBuilding.Enabled = true;
-                btnExportByBuilding.Text = "CSV по зданиям";
+                btnExportByBuilding.Text = "CSV по блокам";
 
-                MessageBox.Show($"Готово. Создано файлов: {filesCreated} (по {buildingsTotal} зданиям).",
-                    "Экспорт по зданиям", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Готово. Создано файлов: {filesCreated} (по {blocksTotal} блокам).",
+                    "Экспорт по блокам", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 btnExportByBuilding.Enabled = true;
-                btnExportByBuilding.Text = "CSV по зданиям";
+                btnExportByBuilding.Text = "CSV по блокам";
                 MessageBox.Show($"Ошибка экспорта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+
+        // Склеивает части с одинарным пробелом и без двойных пробелов
+        private static string BuildDeviceDescription(string distinct, string cabinet, string type)
+        {
+            string res = string.Empty;
+            if (!string.IsNullOrWhiteSpace(distinct)) res = distinct.Trim();
+            if (!string.IsNullOrWhiteSpace(cabinet)) res += (res.Length > 0 ? " " : "") + cabinet.Trim();
+            if (!string.IsNullOrWhiteSpace(type)) res += (res.Length > 0 ? " " : "") + type.Trim();
+            return res;
         }
 
 
 
 
 
+        // Возвращает "00","10","20","30","40" либо null, если не распознано
+        private static string GetBlockFromBuildingOrKks(string building, string cabinetKks)
+        {
+            // 1) Пробуем по "Здание" (например, "10UBA" -> "10")
+            if (!string.IsNullOrWhiteSpace(building) && building.Length >= 2 &&
+                char.IsDigit(building[0]) && char.IsDigit(building[1]))
+            {
+                string b = building.Substring(0, 2);
+                if (b == "00" || b == "10" || b == "20" || b == "30" || b == "40")
+                    return b;
+            }
 
+            // 2) Фолбэк — по KKS шкафа (например, "10CMM11" -> "10")
+            if (!string.IsNullOrWhiteSpace(cabinetKks) && cabinetKks.Length >= 2 &&
+                char.IsDigit(cabinetKks[0]) && char.IsDigit(cabinetKks[1]))
+            {
+                string b = cabinetKks.Substring(0, 2);
+                if (b == "00" || b == "10" || b == "20" || b == "30" || b == "40")
+                    return b;
+            }
 
+            return null; // не распознали
+        }
 
-
-
-
-
-
-
-
-
+        private static string GetBlockLabel(string block)
+        {
+            switch (block)
+            {
+                case "00": return "общестанционка";
+                case "10": return "первый_блок";
+                case "20": return "второй_блок";
+                case "30": return "третий_блок";
+                case "40": return "четвёртый_блок";
+                default: return "неизвестно";
+            }
+        }
 
         /// <param name="csvContent"></param>
         // Общая «шапка» CSV (как в GenerateCsvContent, но один раз на файл)
@@ -1937,6 +1992,10 @@ COMMIT;";
             sb.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.OPRT,int,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,OPRT,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
         }
 
+        private void Converter_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

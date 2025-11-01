@@ -1,54 +1,48 @@
 ﻿// Converter.Designer.cs
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace GUI_EXCEL_parser
 {
     partial class Converter
     {
-        /// <summary>
-        /// Обязательная переменная конструктора.
-        /// </summary>
+        /// <summary>Обязательная переменная конструктора.</summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Освободить все используемые ресурсы.
-        /// </summary>
-        /// <param name="disposing">истинно, если управляемый ресурс должен быть удален; иначе ложно.</param>
+        /// <summary>Освободить все используемые ресурсы.</summary>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         #region Код, автоматически созданный конструктором форм Windows
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtExcelFilePath;
-        private System.Windows.Forms.TextBox txtOutputDirectory;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button btnConvert;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button btnCreateSecondDatabase;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Button btnCreateDuplicatedDatabase;
-        private System.Windows.Forms.Button btnParseDpl;
+        private Label label1;
+        private Label label2;
+        private TextBox txtExcelFilePath;
+        private TextBox txtOutputDirectory;
+        private Button button1;                    // Выбрать файл Excel
+        private Button btnConvert;                 // Конвертировать
+        private Button button3;                    // Выбрать папку вывода
+        private Button button4;                    // О программе
+        private Button button5;                    // Создать базу данных
+        private Button btnCreateSecondDatabase;    // Создать вторую БД
+        private ProgressBar progressBar1;
+        private Button btnCreateDuplicatedDatabase;// Создать БД с дублированием
+        private Button btnParseDpl;                // Парсить DPL
+        private Button btnExportByBuilding;        // CSV по блокам (00/10/20/30/40)
+        private FlowLayoutPanel panelButtons;      // Панель для ровных кнопок
 
         /// <summary>
-        /// Требуемый метод для поддержки конструктора — не изменяйте
-        /// содержимое этого метода с помощью редактора кода.
+        /// Требуемый метод для поддержки конструктора — не изменяйте содержимое этого метода с помощью редактора кода.
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Converter));
+            this.components = new System.ComponentModel.Container();
+
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtExcelFilePath = new System.Windows.Forms.TextBox();
@@ -63,227 +57,180 @@ namespace GUI_EXCEL_parser
             this.btnCreateDuplicatedDatabase = new System.Windows.Forms.Button();
             this.btnParseDpl = new System.Windows.Forms.Button();
             this.btnExportByBuilding = new System.Windows.Forms.Button();
+            this.panelButtons = new System.Windows.Forms.FlowLayoutPanel();
+
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
-            // 
-            // label2
-            // 
-            resources.ApplyResources(this.label2, "label2");
-            this.label2.Name = "label2";
-            // 
-            // txtExcelFilePath
-            // 
-            resources.ApplyResources(this.txtExcelFilePath, "txtExcelFilePath");
-            this.txtExcelFilePath.Name = "txtExcelFilePath";
-            // 
-            // txtOutputDirectory
-            // 
-            resources.ApplyResources(this.txtOutputDirectory, "txtOutputDirectory");
-            this.txtOutputDirectory.Name = "txtOutputDirectory";
-            this.txtOutputDirectory.TextChanged += new System.EventHandler(this.txtOutputDirectory_TextChanged);
-            // 
-            // button1
-            // 
-            resources.ApplyResources(this.button1, "button1");
-            this.button1.Name = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnSelectExcelFile_Click);
-            // 
-            // btnConvert
-            // 
-            resources.ApplyResources(this.btnConvert, "btnConvert");
-            this.btnConvert.Name = "btnConvert";
-            this.btnConvert.UseVisualStyleBackColor = true;
-            this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
-            // 
-            // button3
-            // 
-            resources.ApplyResources(this.button3, "button3");
-            this.button3.Name = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.btnSelectOutputDirectory_Click);
-            // 
-            // button4
-            // 
-            resources.ApplyResources(this.button4, "button4");
-            this.button4.Name = "button4";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.btnInfo_Click);
-            // 
-            // button5
-            // 
-            resources.ApplyResources(this.button5, "button5");
-            this.button5.Name = "button5";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            // 
-            // btnCreateSecondDatabase
-            // 
-            resources.ApplyResources(this.btnCreateSecondDatabase, "btnCreateSecondDatabase");
-            this.btnCreateSecondDatabase.Name = "btnCreateSecondDatabase";
-            this.btnCreateSecondDatabase.UseVisualStyleBackColor = true;
-            this.btnCreateSecondDatabase.Click += new System.EventHandler(this.btnCreateSecondDatabase_Click);
-            // 
-            // progressBar1
-            // 
-            resources.ApplyResources(this.progressBar1, "progressBar1");
-            this.progressBar1.Name = "progressBar1";
-            // 
-            // btnCreateDuplicatedDatabase
-            // 
-            resources.ApplyResources(this.btnCreateDuplicatedDatabase, "btnCreateDuplicatedDatabase");
-            this.btnCreateDuplicatedDatabase.Name = "btnCreateDuplicatedDatabase";
-            this.btnCreateDuplicatedDatabase.UseVisualStyleBackColor = true;
-            this.btnCreateDuplicatedDatabase.Click += new System.EventHandler(this.btnCreateDuplicatedDatabase_Click);
-            // 
-            // btnParseDpl
-            // 
-            resources.ApplyResources(this.btnParseDpl, "btnParseDpl");
-            this.btnParseDpl.Name = "btnParseDpl";
-            this.btnParseDpl.UseVisualStyleBackColor = true;
-            this.btnParseDpl.Click += new System.EventHandler(this.btnParseDpl_Click);
-            // 
-            // btnExportByBuilding
-            // 
-            resources.ApplyResources(this.btnExportByBuilding, "btnExportByBuilding");
-            this.btnExportByBuilding.Cursor = System.Windows.Forms.Cursors.SizeNESW;
-            this.btnExportByBuilding.Name = "btnExportByBuilding";
-            this.btnExportByBuilding.UseVisualStyleBackColor = true;
-            // 
-            // Converter
-            // 
-            resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Window;
-            this.Controls.Add(this.btnExportByBuilding);
-            this.Controls.Add(this.btnParseDpl);
-            this.Controls.Add(this.btnCreateDuplicatedDatabase);
-            this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.btnCreateSecondDatabase);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.btnConvert);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.txtOutputDirectory);
-            this.Controls.Add(this.txtExcelFilePath);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+
+            // ---------- Форма ----------
+            // Базовые параметры масштабирования — возвращаем к 96 dpi,
+            // чтобы не "раздувало" контролы при повторном открытии в дизайнере.
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ClientSize = new System.Drawing.Size(920, 420);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Converter";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "EXCEL → CSV / DB — Converter";
+
+            // ---------- Метки ----------
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(16, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(73, 15);
+            this.label1.TabIndex = 100;
+            this.label1.Text = "Excel-файл:";
+
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(16, 58);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 15);
+            this.label2.TabIndex = 101;
+            this.label2.Text = "Папка вывода:";
+
+            // ---------- Поля ввода ----------
+            this.txtExcelFilePath.Location = new System.Drawing.Point(120, 14);
+            this.txtExcelFilePath.Name = "txtExcelFilePath";
+            this.txtExcelFilePath.Size = new System.Drawing.Size(650, 23);
+            this.txtExcelFilePath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.txtExcelFilePath.TabIndex = 0;
+
+            this.txtOutputDirectory.Location = new System.Drawing.Point(120, 54);
+            this.txtOutputDirectory.Name = "txtOutputDirectory";
+            this.txtOutputDirectory.Size = new System.Drawing.Size(650, 23);
+            this.txtOutputDirectory.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.txtOutputDirectory.TabIndex = 2;
+            this.txtOutputDirectory.TextChanged += new System.EventHandler(this.txtOutputDirectory_TextChanged);
+
+            // ---------- Кнопки рядом с полями ----------
+            this.button1.Location = new System.Drawing.Point(780, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(120, 27);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Выбрать…";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.button1.Click += new System.EventHandler(this.btnSelectExcelFile_Click);
+
+            this.button3.Location = new System.Drawing.Point(780, 52);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(120, 27);
+            this.button3.TabIndex = 3;
+            this.button3.Text = "Папка…";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.button3.Click += new System.EventHandler(this.btnSelectOutputDirectory_Click);
+
+            // ---------- Прогрессбар ----------
+            this.progressBar1.Location = new System.Drawing.Point(16, 96);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(884, 18);
+            this.progressBar1.TabIndex = 4;
+            this.progressBar1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+
+            // ---------- Панель кнопок (ровная сетка) ----------
+            this.panelButtons.Location = new System.Drawing.Point(16, 126);
+            this.panelButtons.Name = "panelButtons";
+            this.panelButtons.Size = new System.Drawing.Size(884, 270);
+            this.panelButtons.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            this.panelButtons.AutoSize = false;
+            this.panelButtons.WrapContents = true;
+            this.panelButtons.FlowDirection = FlowDirection.LeftToRight;
+            this.panelButtons.Padding = new Padding(0);
+            this.panelButtons.Margin = new Padding(0);
+            this.panelButtons.TabIndex = 5;
+
+            // Единые размеры и отступы для «больших» кнопок
+            Size btnSize = new Size(200, 34);
+            Padding btnMargin = new Padding(6, 6, 6, 6);
+
+            // btnConvert
+            this.btnConvert.Name = "btnConvert";
+            this.btnConvert.Text = "Конвертировать";
+            this.btnConvert.Size = btnSize;
+            this.btnConvert.Margin = btnMargin;
+            this.btnConvert.TabIndex = 10;
+            this.btnConvert.UseVisualStyleBackColor = true;
+            this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
+
+            // button5 — Создать базу данных
+            this.button5.Name = "button5";
+            this.button5.Text = "Создать базу данных";
+            this.button5.Size = btnSize;
+            this.button5.Margin = btnMargin;
+            this.button5.TabIndex = 11;
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+
+            // btnCreateSecondDatabase
+            this.btnCreateSecondDatabase.Name = "btnCreateSecondDatabase";
+            this.btnCreateSecondDatabase.Text = "Создать вторую БД";
+            this.btnCreateSecondDatabase.Size = btnSize;
+            this.btnCreateSecondDatabase.Margin = btnMargin;
+            this.btnCreateSecondDatabase.TabIndex = 12;
+            this.btnCreateSecondDatabase.UseVisualStyleBackColor = true;
+            this.btnCreateSecondDatabase.Click += new System.EventHandler(this.btnCreateSecondDatabase_Click);
+
+            // btnCreateDuplicatedDatabase
+            this.btnCreateDuplicatedDatabase.Name = "btnCreateDuplicatedDatabase";
+            this.btnCreateDuplicatedDatabase.Text = "Создать БД (дублирование)";
+            this.btnCreateDuplicatedDatabase.Size = btnSize;
+            this.btnCreateDuplicatedDatabase.Margin = btnMargin;
+            this.btnCreateDuplicatedDatabase.TabIndex = 13;
+            this.btnCreateDuplicatedDatabase.UseVisualStyleBackColor = true;
+            this.btnCreateDuplicatedDatabase.Click += new System.EventHandler(this.btnCreateDuplicatedDatabase_Click);
+
+            // btnParseDpl
+            this.btnParseDpl.Name = "btnParseDpl";
+            this.btnParseDpl.Text = "Парсить DPL → DB";
+            this.btnParseDpl.Size = btnSize;
+            this.btnParseDpl.Margin = btnMargin;
+            this.btnParseDpl.TabIndex = 14;
+            this.btnParseDpl.UseVisualStyleBackColor = true;
+            this.btnParseDpl.Click += new System.EventHandler(this.btnParseDpl_Click);
+
+            // btnExportByBuilding — для экспорта CSV по блокам (00/10/20/30/40)
+            this.btnExportByBuilding.Name = "btnExportByBuilding";
+            this.btnExportByBuilding.Text = "CSV по блокам (00/10/20/30/40)";
+            this.btnExportByBuilding.Size = btnSize;
+            this.btnExportByBuilding.Margin = btnMargin;
+            this.btnExportByBuilding.TabIndex = 15;
+            this.btnExportByBuilding.UseVisualStyleBackColor = true;
+            this.btnExportByBuilding.Click += new System.EventHandler(this.btnExportByBuilding_Click);
+
+            // button4 — О программе
+            this.button4.Name = "button4";
+            this.button4.Text = "О программе";
+            this.button4.Size = btnSize;
+            this.button4.Margin = btnMargin;
+            this.button4.TabIndex = 16;
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.btnInfo_Click);
+
+            // Добавляем кнопки в панель
+            this.panelButtons.Controls.Add(this.btnConvert);
+            this.panelButtons.Controls.Add(this.button5);
+            this.panelButtons.Controls.Add(this.btnCreateSecondDatabase);
+            this.panelButtons.Controls.Add(this.btnCreateDuplicatedDatabase);
+            this.panelButtons.Controls.Add(this.btnParseDpl);
+            this.panelButtons.Controls.Add(this.btnExportByBuilding);
+            this.panelButtons.Controls.Add(this.button4);
+
+            // ---------- Добавляем на форму ----------
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.txtExcelFilePath);
+            this.Controls.Add(this.txtOutputDirectory);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.panelButtons);
+
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
-
-        // ─────────────────────────────────────────────────────────────────
-        // ТЕМА ОФОРМЛЕНИЯ: современная серо‑жёлтая палитра, плоские кнопки,
-        // жёлтый прогрессбар, повышенная читаемость.
-        // НИКАКИХ изменений в размерах/позициях — только цвета/стили.
-        // ─────────────────────────────────────────────────────────────────
-
-        // WinAPI для окраски ProgressBar в жёлтый (PBST_PAUSED)
-        private const int WM_USER = 0x0400;
-        private const int PBM_SETSTATE = WM_USER + 16;
-        private const int PBST_NORMAL = 0x0001; // зелёный (по умолчанию)
-        private const int PBST_ERROR = 0x0002; // красный
-        private const int PBST_PAUSED = 0x0003; // жёлтый
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-        private void ApplyModernGrayYellowTheme()
-        {
-            // Палитра (подобрана для контраста и «кинематографического» ощущения)
-            var colBgPrimary = Color.FromArgb(32, 32, 36);   // тёмно‑серый фон формы
-            var colBgControl = Color.FromArgb(40, 40, 46);   // фон контролов
-            var colBgHover = Color.FromArgb(55, 55, 62);   // наведение
-            var colBgActive = Color.FromArgb(65, 65, 72);   // нажатие/актив
-            var colBorder = Color.FromArgb(120, 110, 60); // приглушённый жёлтый контур
-            var colAccent = Color.FromArgb(227, 179, 65); // тёплый жёлтый (акцент)
-            var colTextPrimary = Color.FromArgb(230, 220, 180); // мягкий жёлтый текст
-            var colTextMuted = Color.FromArgb(190, 180, 140); // вторичный текст
-
-            // Фон формы и антифликер
-            this.BackColor = colBgPrimary;
-            this.ForeColor = colTextPrimary;
-            this.DoubleBuffered = true;
-
-            // Лейблы — только цвет (не меняем размеры/шрифты)
-            StyleLabel(label1, colTextPrimary);
-            StyleLabel(label2, colTextPrimary);
-
-            // Текстбоксы — тёмный фон, жёлтый текст, тонкая рамка
-            StyleTextBox(txtExcelFilePath, colBgControl, colTextPrimary, colBorder);
-            StyleTextBox(txtOutputDirectory, colBgControl, colTextPrimary, colBorder);
-
-            // Кнопки — плоские, без изменения размеров
-            StyleButton(button1, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-            StyleButton(btnConvert, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-            StyleButton(button3, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-            StyleButton(button4, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-            StyleButton(button5, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-            StyleButton(btnCreateSecondDatabase, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-            StyleButton(btnCreateDuplicatedDatabase, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-            StyleButton(btnParseDpl, colBgControl, colTextPrimary, colBorder, colBgHover, colBgActive);
-
-            // Прогрессбар — режим Continuous + жёлтый state (PBST_PAUSED)
-            try
-            {
-                progressBar1.Style = ProgressBarStyle.Continuous;
-                // под Windows 10/11 это переключает цвет в жёлтый
-                SendMessage(progressBar1.Handle, PBM_SETSTATE, (IntPtr)PBST_PAUSED, IntPtr.Zero);
-                progressBar1.ForeColor = colAccent; // на старых темах может влиять
-                progressBar1.BackColor = colBgControl;
-            }
-            catch { /* игнор если ОС не поддерживает PBM_SETSTATE */ }
-
-            // Мелкие штрихи на форме
-            this.FormBorderStyle = FormBorderStyle.FixedSingle; // как было
-            this.MaximizeBox = false;                       // как было
-        }
-
-        private static void StyleLabel(Label lbl, Color fore)
-        {
-            if (lbl == null) return;
-            lbl.ForeColor = fore;
-            lbl.BackColor = Color.Transparent; // чтобы над серым фоном выглядело аккуратно
-            // ВАЖНО: шрифт и AutoSize не трогаем, чтобы не менять размер!
-        }
-
-        private static void StyleTextBox(TextBox tb, Color back, Color fore, Color border)
-        {
-            if (tb == null) return;
-            tb.BackColor = back;
-            tb.ForeColor = fore;
-            tb.BorderStyle = BorderStyle.FixedSingle; // тонкая рамка
-            // Подсказка: запрет авто‑вставки системного цвета
-            tb.HideSelection = false;
-        }
-
-        private static void StyleButton(Button btn, Color back, Color fore, Color border, Color hover, Color active)
-        {
-            if (btn == null) return;
-            btn.UseVisualStyleBackColor = false; // позволяем задавать BackColor
-            btn.BackColor = back;
-            btn.ForeColor = fore;
-            btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderColor = border;
-            btn.FlatAppearance.BorderSize = 1;
-            btn.FlatAppearance.MouseOverBackColor = hover;
-            btn.FlatAppearance.MouseDownBackColor = active;
-
-            // Тонкая настройка рендера текста для читаемости
-            btn.TextImageRelation = TextImageRelation.ImageBeforeText;
-        }
-
-        private Button btnExportByBuilding;
     }
 }

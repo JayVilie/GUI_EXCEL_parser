@@ -126,7 +126,11 @@
     <value>16, 18</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 13</value>
+    <value>70, 15</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>100</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
     <value>Excel-файл:</value>
@@ -138,7 +142,10 @@
     <value>16, 58</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 13</value>
+    <value>87, 15</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>101</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
     <value>Папка вывода:</value>
@@ -153,9 +160,8 @@
     <value>120, 14</value>
   </data>
   <data name="txtExcelFilePath.Size" type="System.Drawing.Size, System.Drawing">
-    <value>650, 20</value>
+    <value>650, 23</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="txtExcelFilePath.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -169,7 +175,7 @@
     <value>120, 54</value>
   </data>
   <data name="txtOutputDirectory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>650, 20</value>
+    <value>650, 23</value>
   </data>
   <data name="txtOutputDirectory.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -179,6 +185,9 @@
   </data>
   <data name="button1.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
+  </data>
+  <data name="button1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="button1.Location" type="System.Drawing.Point, System.Drawing">
     <value>780, 12</value>
@@ -195,6 +204,9 @@
   <data name="btnConvert.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="btnConvert.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="btnConvert.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 6</value>
   </data>
@@ -204,11 +216,17 @@
   <data name="btnConvert.Size" type="System.Drawing.Size, System.Drawing">
     <value>200, 34</value>
   </data>
+  <data name="btnConvert.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
   <data name="button3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
   <data name="button3.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
+  </data>
+  <data name="button3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="button3.Location" type="System.Drawing.Point, System.Drawing">
     <value>780, 52</value>
@@ -225,6 +243,9 @@
   <data name="button4.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="button4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="button4.Location" type="System.Drawing.Point, System.Drawing">
     <value>430, 52</value>
   </data>
@@ -235,13 +256,16 @@
     <value>200, 34</value>
   </data>
   <data name="button4.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
+    <value>16</value>
   </data>
   <data name="button4.Text" xml:space="preserve">
     <value>О программе</value>
   </data>
   <data name="button5.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
+  </data>
+  <data name="button5.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="button5.Location" type="System.Drawing.Point, System.Drawing">
     <value>218, 6</value>
@@ -253,13 +277,16 @@
     <value>200, 34</value>
   </data>
   <data name="button5.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+    <value>11</value>
   </data>
   <data name="button5.Text" xml:space="preserve">
     <value>Создать базу данных</value>
   </data>
   <data name="btnCreateSecondDatabase.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
+  </data>
+  <data name="btnCreateSecondDatabase.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnCreateSecondDatabase.Location" type="System.Drawing.Point, System.Drawing">
     <value>430, 6</value>
@@ -271,13 +298,16 @@
     <value>200, 34</value>
   </data>
   <data name="btnCreateSecondDatabase.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
+    <value>12</value>
   </data>
   <data name="btnCreateSecondDatabase.Text" xml:space="preserve">
     <value>Создать вторую БД</value>
   </data>
   <data name="progressBar1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
+  </data>
+  <data name="progressBar1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="progressBar1.Location" type="System.Drawing.Point, System.Drawing">
     <value>16, 96</value>
@@ -291,6 +321,9 @@
   <data name="btnCreateDuplicatedDatabase.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="btnCreateDuplicatedDatabase.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="btnCreateDuplicatedDatabase.Location" type="System.Drawing.Point, System.Drawing">
     <value>642, 6</value>
   </data>
@@ -301,13 +334,16 @@
     <value>200, 34</value>
   </data>
   <data name="btnCreateDuplicatedDatabase.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
+    <value>13</value>
   </data>
   <data name="btnCreateDuplicatedDatabase.Text" xml:space="preserve">
     <value>Создать БД (дублирование)</value>
   </data>
   <data name="btnParseDpl.Font" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
+  </data>
+  <data name="btnParseDpl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnParseDpl.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 52</value>
@@ -319,10 +355,13 @@
     <value>200, 34</value>
   </data>
   <data name="btnParseDpl.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+    <value>14</value>
   </data>
   <data name="btnParseDpl.Text" xml:space="preserve">
     <value>Парсить DPL → DB</value>
+  </data>
+  <data name="btnExportByBuilding.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnExportByBuilding.Location" type="System.Drawing.Point, System.Drawing">
     <value>218, 52</value>
@@ -334,7 +373,7 @@
     <value>200, 34</value>
   </data>
   <data name="btnExportByBuilding.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
+    <value>15</value>
   </data>
   <data name="btnExportByBuilding.Text" xml:space="preserve">
     <value>CSV по блокам (00/10/20/30/40)</value>
@@ -354,11 +393,11 @@
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>920, 420</value>
   </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt</value>
+  </data>
   <data name="$this.Icon" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>EXCEL → CSV / DB — Converter</value>
