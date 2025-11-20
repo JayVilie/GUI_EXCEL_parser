@@ -419,7 +419,7 @@ namespace GUI_EXCEL_parser
                 csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.HMI_Alarm_Word_2,Uint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,Alarm_word_2,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
             }
             csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.HMI_Alarm_Word_1,Uint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,Alarm_word_1,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
-            csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,FB_Cabinet_DB.Desigo_Connection,bool,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,ConnectionPLC,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
+            csvContent.AppendLine($"{buildingName + "_" + cabinetName},DB_HMI_IO_Mechanisms.Cabinet.Watchdog,Dint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,ConnectionPLC,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
             csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.OPRT,int,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,OPRT,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
 
             // Пропускаем пустую строку и добавляем переменные для зон
@@ -458,6 +458,9 @@ namespace GUI_EXCEL_parser
                     if (model.Contains("AKKUYU_VALVE"))
                     {
                         csvContent.AppendLine($"{buildingName + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.Extinguishing_State,Uint,IO,FALSE,COV,pollGr_3,{model},Extinguishing_State,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
+                     //   csvContent.AppendLine($"{buildingName + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].PRM.Extinguishing_State,Uint,IO,FALSE,COV,pollGr_3,{model},Extinguishing_State,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,"); необходимо  добавить тег РЕДУНДАНТ
+
+
                     }
 
                     csvContent.AppendLine($"{buildingName + "_" + cabinetName},{kksnumber},,DB_HMI_IO_Mechanisms.Devices.Devices[{kksnumber}].ALM.Alarm_word_1,Uint,IO,FALSE,COV,pollGr_3,{model},Alarm_word_1,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
@@ -499,6 +502,12 @@ namespace GUI_EXCEL_parser
                 { "SAC", "AKKUYU_GATE" },  // Ворота
                 { "SGC", "AKKUYU_VALVE" }, // Клапан
                 { "SGK", "AKKUYU_VALVE" },
+
+                { "SGA", "AKKUYU_VALVE" }, // Клапан
+                { "GKE", "AKKUYU_VALVE" }, // Клапан
+
+                { "KLE", "AKKUYU_GATE" }, // Клапан
+
                 { "SAN", "AKKUYU_GATE" },
                 { "SAS", "AKKUYU_GATE" },
                 { "SAU", "AKKUYU_GATE" },
@@ -506,9 +515,6 @@ namespace GUI_EXCEL_parser
                 { "KLC", "AKKUYU_GATE" },
                 { "KLF", "AKKUYU_GATE" },
                 { "KLS", "AKKUYU_GATE" },
-                { "SGA", "AKKUYU_GATE" }, // Клапан
-                { "GKE", "AKKUYU_GATE" }, // Клапан
-                { "KLE", "AKKUYU_GATE" }, // Клапан
 
                 { "SAH", "AKKUYU_GATE" },
                 { "KLL", "AKKUYU_GATE" },
@@ -516,14 +522,11 @@ namespace GUI_EXCEL_parser
                 { "SAT", "AKKUYU_GATE" },
                 { "SAK", "AKKUYU_GATE" },
                 { "SAF", "AKKUYU_GATE" },
-
                 { "SAR", "AKKUYU_GATE" },
                 { "KLB", "AKKUYU_GATE" },
-
                 { "SAD", "AKKUYU_GATE" },
                 { "SAM", "AKKUYU_GATE" },
                 { "SAQ", "AKKUYU_GATE" },
-
                 { "SAE", "AKKUYU_GATE" }
             }
         },
@@ -1740,7 +1743,8 @@ COMMIT;";
                         string type = CleanString(cab.Type);
 
                         //string desc = GetDistinctBuildingsWithExclusion(kkss, building) + cabinetNm + type;
-                        string desc = BuildDeviceDescription(GetDistinctBuildingsWithExclusion(kkss, building),cabinetNm,type);
+                        //string desc = BuildDeviceDescription(GetDistinctBuildingsWithExclusion(kkss, building),cabinetNm,type);
+                        string desc = BuildDeviceDescription(GetDistinctBuildingsForBlockExport(kkss, building), cabinetNm, type);
 
 
 
@@ -1850,33 +1854,50 @@ COMMIT;";
             return res;
         }
 
+        private static (string mechKks, string mechNum, string mechBld) ParseMechTriplet(string raw, string fallbackBuilding = "")
+        {
+            // сохраняем пустые элементы между пробелами
+            var parts = raw.Split(new[] { ' ' }, StringSplitOptions.None);
+            string mechKks = parts.ElementAtOrDefault(0)?.Trim() ?? "";
+            string mechNum = parts.ElementAtOrDefault(1)?.Trim() ?? "";   // может быть пустым — это ОК
+            string mechBld = parts.ElementAtOrDefault(2)?.Trim() ?? fallbackBuilding;
+            return (mechKks, mechNum, mechBld);
+        }
+
+        private static bool IsUint(string s) => !string.IsNullOrWhiteSpace(s) && s.All(char.IsDigit);
 
 
 
 
         // Возвращает "00","10","20","30","40" либо null, если не распознано
+        // Возвращает "00","10","20","30","40" с нормализацией префиксов (0x→00, 1x→10, 2x→20, 3x→30, 4x→40)
         private static string GetBlockFromBuildingOrKks(string building, string cabinetKks)
         {
-            // 1) Пробуем по "Здание" (например, "10UBA" -> "10")
-            if (!string.IsNullOrWhiteSpace(building) && building.Length >= 2 &&
-                char.IsDigit(building[0]) && char.IsDigit(building[1]))
+            string Normalize(string src)
             {
-                string b = building.Substring(0, 2);
-                if (b == "00" || b == "10" || b == "20" || b == "30" || b == "40")
-                    return b;
+                if (string.IsNullOrWhiteSpace(src)) return null;
+                char d0 = src[0];
+                if (!char.IsDigit(d0)) return null;
+
+                switch (d0)
+                {
+                    case '0': return "00";
+                    case '1': return "10";
+                    case '2': return "20";
+                    case '3': return "30";
+                    case '4': return "40";
+                    default: return null;
+                }
             }
 
-            // 2) Фолбэк — по KKS шкафа (например, "10CMM11" -> "10")
-            if (!string.IsNullOrWhiteSpace(cabinetKks) && cabinetKks.Length >= 2 &&
-                char.IsDigit(cabinetKks[0]) && char.IsDigit(cabinetKks[1]))
-            {
-                string b = cabinetKks.Substring(0, 2);
-                if (b == "00" || b == "10" || b == "20" || b == "30" || b == "40")
-                    return b;
-            }
+            // 1) Пытаемся по "Здание" (напр., 11UBN → 10)
+            var byBuilding = Normalize(building);
+            if (byBuilding != null) return byBuilding;
 
-            return null; // не распознали
+            // 2) Фолбэк — по KKS шкафа (напр., 11CMM05 → 10)
+            return Normalize(cabinetKks);
         }
+
 
         private static string GetBlockLabel(string block)
         {
@@ -1988,9 +2009,31 @@ COMMIT;";
             }
 
             sb.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.HMI_Alarm_Word_1,Uint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,Alarm_word_1,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
-            sb.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,FB_Cabinet_DB.Desigo_Connection,bool,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,ConnectionPLC,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
+            sb.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.Watchdog,Dint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,ConnectionPLC,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
             sb.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.OPRT,int,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,OPRT,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
         }
+
+        // безопасно достаёт список чужих зданий (кроме текущего шкафа)
+        private static string GetDistinctBuildingsForBlockExport(List<string> kkss, string deviceBuilding)
+        {
+            var set = new HashSet<string>();
+            foreach (var raw in kkss)
+            {
+                var (_, _, bld) = ParseMechTriplet(raw, deviceBuilding); // уже учитывает пустой номер
+                if (!string.IsNullOrWhiteSpace(bld))
+                    set.Add(bld);
+            }
+            set.Remove(deviceBuilding); // оставляем только "чужие" здания
+            return set.Count > 0 ? "(" + string.Join(" ", set) + ")" : string.Empty;
+        }
+
+
+
+
+
+
+
+
 
         private void Converter_Load(object sender, EventArgs e)
         {
