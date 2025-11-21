@@ -419,7 +419,7 @@ namespace GUI_EXCEL_parser
                 csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.HMI_Alarm_Word_2,Uint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,Alarm_word_2,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
             }
             csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.HMI_Alarm_Word_1,Uint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,Alarm_word_1,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,Alarm,EQ,1,,,,,DriverFail,,");
-            csvContent.AppendLine($"{buildingName + "_" + cabinetName},DB_HMI_IO_Mechanisms.Cabinet.Watchdog,Dint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,ConnectionPLC,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
+            csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.Watchdog,Dint,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,ConnectionPLC,,,,,,,,,,,,,,,,,,,SmoothingConfig_01,,,,,,,,DriverFail,,");
             csvContent.AppendLine($"{buildingName + "_" + cabinetName},Diagnostics,,DB_HMI_IO_Mechanisms.Cabinet.OPRT,int,IO,FALSE,COV,pollGr_3,Diagnostic_Cab,OPRT,,,,,,,,,,,,,,,,,TRUE,TRUE,SmoothingConfig_01,,,,,,,,DriverFail,,");
 
             // Пропускаем пустую строку и добавляем переменные для зон
